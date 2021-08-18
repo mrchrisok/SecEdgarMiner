@@ -1,0 +1,300 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"environment": {
+			"type": "string",
+			"devaultValue": "Dev"
+		},
+		"subscriptionId": {
+			"type": "string"
+		},
+		"appName": {
+			"type": "string",
+			"defaultValue": "[concat(parameters('appName'), 'App')]"
+		},
+		"hostingPlanName": {
+			"type": "string",
+			"defaultValue": "[concat(parameters('appName'), 'HostingPlan')]"
+		},
+		"serverFarmResourceGroup": {
+			"type": "string"
+		},
+		"alwaysOn": {
+			"type": "bool"
+		},
+		"location": {
+			"type": "string",
+			"defaultValue": "[resourceGroup().location]"
+		},
+		"storageAccountName": {
+			"type": "string",
+			"defaultValue": "[concat(parameters('appName'), 'Storage')]"
+		},
+		"use32BitWorkerProcess": {
+			"type": "bool"
+		},
+		"sku": {
+			"type": "string"
+		},
+		"skuCode": {
+			"type": "string"
+		},
+		"workerSize": {
+			"type": "string"
+		},
+		"workerSizeId": {
+			"type": "string"
+		},
+		"numberOfWorkers": {
+			"type": "string"
+		},
+		"appInsightsWorkspaceName": {
+			"type": "string",
+			"defaultValue": "[concat(parameters('appName'), 'InsightsWks')]"
+		},
+		"appInsightsWorkspaceSku": {
+			"type": "string",
+			"defaultValue": "pergb2018"
+		},
+		"appInsightsName": {
+			"type": "string",
+			"defaultValue": "[concat(parameters('appName'), 'Insights')]"
+		},
+		"keyVaultName": {
+			"type": "string",
+			"defaultValue": "[concat(parameters('appName'), 'KeyVault')]"
+		}
+	},
+	"variables": {
+		"keyVaultUri": "[concat('https://', toLower(parameters('keyVaultName')), '.vault.azure.net/')]",
+		"SendGridApiSecretUri": ""
+	},
+	"resources": [
+		{
+			"type": "Microsoft.KeyVault/vaults",
+			"apiVersion": "2021-04-01-preview",
+			"name": "[parameters('keyVaultName')]",
+			"location": "parameters('location')",
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/sites', parameters('appName'))]"
+			],
+			"tags": {
+				"environment": "[parameters('environment')]",
+				"displayName": "KeyVault"
+			},
+			"properties": {
+				"accessPolicies": [
+					{
+						"tenantId": "[subscription().tenantid]",
+						"objectId": "[reference(resourceId('Microsoft.Web/sites', parameters('appName')),'2020-12-01', 'full').identity.principalId]",
+						"permissions": {
+							"keys": [],
+							"secrets": [
+								"get"
+							],
+							"certificates": []
+						}
+					}
+				],
+				"enabledForDeployment": true,
+				"enabledForDiskEncryption": true,
+				"enabledForTemplateDeployment": true,
+				"enableRbacAuthorization": true,
+				"enableSoftDelete": true,
+				"provisioningState": "Succeeded",
+				"sku": {
+					"family": "A",
+					"name": "Standard"
+				},
+				"softDeleteRetentionInDays": 90,
+				"tenantId": "6be2921e-959f-43af-bea3-1defc61ffdc2",
+				"vaultUri": "[variables('keyVaultUri')]"
+			},
+			"resources": [
+				{
+					"type": "secrets",
+					"name": "[concat(parameters('keyVaultName'), '/SendGridApiKey')]",
+					"location": "[parameters('location')]",
+					"dependsOn": [
+						"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+					],
+					"properties": {
+						"attributes": {
+							"enabled": true
+						}
+					},
+					"tags": {
+						"environment": "[parameters('environment')]",
+						"displayName": "SendGridApiKey"
+					}
+				}
+			]
+		},
+		{
+			"apiVersion": "2019-06-01",
+			"type": "Microsoft.Storage/storageAccounts",
+			"name": "[parameters('storageAccountName')]",
+			"location": "[parameters('location')]",
+			"kind": "StorageV2",
+			"tags": {
+				"environment": "[parameters('environment')]",
+				"displayName": "StorageAccount"
+			},
+			"sku": {
+				"name": "Standard_LRS"
+			},
+			"properties": {
+				"supportsHttpsTrafficOnly": true,
+				"minimumTlsVersion": "TLS1_2"
+			}
+		},
+		{
+			"apiVersion": "2018-11-01",
+			"name": "[parameters('hostingPlanName')]",
+			"type": "Microsoft.Web/serverfarms",
+			"location": "[parameters('location')]",
+			"kind": "",
+			"tags": {
+				"environment": "[parameters('environment')]",
+				"displayName": "HostingPlan"
+			},
+			"dependsOn": [],
+			"properties": {
+				"name": "[parameters('hostingPlanName')]",
+				"workerSize": "[parameters('workerSize')]",
+				"workerSizeId": "[parameters('workerSizeId')]",
+				"numberOfWorkers": "[parameters('numberOfWorkers')]"
+			},
+			"sku": {
+				"Tier": "[parameters('sku')]",
+				"Name": "[parameters('skuCode')]"
+			}
+		},
+		{
+			"apiVersion": "2018-11-01",
+			"name": "[parameters('appName')]",
+			"type": "Microsoft.Web/sites",
+			"identity": {
+				"type": "SystemAssigned"
+			},
+			"kind": "functionapp",
+			"location": "[parameters('location')]",
+			"tags": {
+				"environment": "[parameters('environment')]",
+				"displayName": "FunctionApp"
+			},
+			"dependsOn": [
+				"[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+				"[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+				"[concat('Microsoft.Insights/components/', parameters('appInsightsName'))]"
+			],
+			"properties": {
+				"name": "[parameters('appName')]",
+				"serverFarmId": "[resourceId('Microsoft.Web/sites', parameters('hostingPlanName'))]",
+				"clientAffinityEnabled": false,
+				"siteConfig": {
+					"appSettings": [
+						{
+							"name": "FUNCTIONS_EXTENSION_VERSION",
+							"value": "~3"
+						},
+						{
+							"name": "FUNCTIONS_WORKER_RUNTIME",
+							"value": "dotnet"
+						},
+						{
+							"name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+							"value": "88e9734a-614f-4ad8-89bd-e8e280207c79"
+						},
+						{
+							"name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+							"value": "InstrumentationKey=88e9734a-614f-4ad8-89bd-e8e280207c79;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/"
+						},
+						{
+							"name": "AzureWebJobsStorage",
+							"value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net')]"
+						},
+						{
+							"name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+							"value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net')]"
+						},
+						{
+							"name": "WEBSITE_CONTENTSHARE",
+							"value": "[concat(toLower(parameters('appName')), 'b5c9')]"
+						}
+					],
+					"use32BitWorkerProcess": "[parameters('use32BitWorkerProcess')]"
+				}
+			},
+			"resources": [
+				{
+					"name": "appsettings",
+					"type": "Microsoft.Web/sites/config",
+					"apiVersion": "2020-12-01",
+					"dependsOn": [
+						"[resourceId('Microsoft.Web/sites', parameters('appName'))]",
+						"[resourceId('Microsoft.Web/sites/extensions', 'MSDeploy')]",
+						"[resourceId('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
+						"[resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), 'SendGridApiKey')]"
+					],
+					"tags": {
+						"displayName": "AppSettings"
+					},
+					"properties": {
+						"MailerOptions__SendGridApiUri": "https://api.sendgrid.com",
+						"appSettings": [
+							{
+								"SendGridApiKey": "string",
+								"value": "[concat('@Microsoft.KeyVault(VaultName=', parameters('keyVaultName'), ';SecretName=SendGridApiKey')]"
+							}
+						],
+						"connectionStrings": [
+							{
+								"name": "SqlConnectionString",
+								"connectionString": "string",
+								"type": "SQLAzure"
+							}
+						]
+					}
+				}
+			]
+		},
+		{
+			"type": "Microsoft.OperationalInsights/workspaces",
+			"apiVersion": "2017-03-15-preview",
+			"name": "[parameters('appInsightsWorkspaceName')]",
+			"location": "[parameters('location')]",
+			"tags": {
+				"environment": "[parameters('environment')]",
+				"displayName": "AppInsightsWorkspace"
+			},
+			"properties": {
+				"sku": {
+					"name": "[parameters('appInsightsWorkspaceSku')]"
+				}
+			}
+		},
+		{
+			"type": "Microsoft.Insights/components",
+			"name": "[parameters('appInsightsName')]",
+			"location": "[parameters('location')]",
+			"tags": {
+				"environment": "[parameters('environment')]",
+				"displayName": "AppInsights"
+			},
+			"apiVersion": "2020-02-02-preview",
+			"dependsOn": [
+				"[concat('Microsoft.OperationalInsights/workspaces/', parameters('appInsightsWorkspaceName'))]"
+			],
+			"properties": {
+				"ApplicationId": "[parameters('appInsightsName')]",
+				"Application_Type": "web",
+				"Flow_Type": "Redfield",
+				"Request_Source": "IbizaAIExtension",
+				"WorkspaceResourceId": "[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('appInsightsWorkspaceName'))]"
+			}
+		}
+	],
+	"outputs": ""
+}

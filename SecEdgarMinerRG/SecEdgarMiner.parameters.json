@@ -1,0 +1,39 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "environment": {
+            "value": "Dev"
+        },
+        "subscriptionId": {
+            "value": "ecbe6fe9-ddc6-4507-af56-068ca612e7ca"
+        },
+        "appName": {
+            "value": "SecEdgarMiner"
+        },
+        "serverFarmResourceGroup": {
+            "value": "Dev.SecEdgarMiner"
+        },
+        "alwaysOn": {
+            "value": false
+        },
+        "sku": {
+            "value": "Dynamic"
+        },
+        "skuCode": {
+            "value": "Y1"
+        },
+        "workerSize": {
+            "value": "0"
+        },
+        "workerSizeId": {
+            "value": "0"
+        },
+        "numberOfWorkers": {
+            "value": "1"
+        },
+        "use32BitWorkerProcess": {
+            "value": true
+        }
+    }
+}
