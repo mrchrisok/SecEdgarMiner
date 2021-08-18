@@ -242,7 +242,7 @@
 						"displayName": "AppSettings"
 					},
 					"properties": {
-						"MailerOptions__SendGridApiUri": "https://api.sendgrid.com",
+						"MailerOptions--SendGridApiUri": "https://api.sendgrid.com",
 						"appSettings": [
 							{
 								"SendGridApiKey": "string",

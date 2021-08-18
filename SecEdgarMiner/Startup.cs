@@ -46,7 +46,7 @@ namespace SecEdgarMiner
 		 builder.Services.AddLogging(options =>
 		 {
 			// this will enable all loggers to write to the console
-			options.AddFilter("SecEdgarMiner", LogLevel.Information);
+			options.AddFilter(nameof(SecEdgarMiner), LogLevel.Information);
 		 });
 
 		 builder.Services.AddHttpClient("SecEdgarMinerClient", client =>
