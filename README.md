@@ -17,7 +17,7 @@ Interesting Features
 - Local development secrets read from Azure Key Vault
     - This bit is actually simple, but how-to: is poorly documented on the web, so 'You're welcome.' :)
 - Strongly-typed configuration
-- Project deployed via: MSDeploy zip pkg + ARM template + Azure Resource Group project
+- Project deployed via: MSDeploy zip + ARM template + Azure Resource Group project
     - This bit is a wicket and is still broken. But have seen it done in the flesh so do-able. Stay tuned.
 
 Copyright (c) 2021 Osita Christopher Okonkwo
