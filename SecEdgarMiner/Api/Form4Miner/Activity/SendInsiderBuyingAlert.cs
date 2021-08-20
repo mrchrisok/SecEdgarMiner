@@ -142,7 +142,7 @@ namespace SecEdgarMiner.Api.Form4Miner.Activity
 
 			string apiKey = _options.SendGridApiKey;
 
-			var sgClient = new SendGrid.SendGridClient(apiKey, _options.SendGridApiKey);
+			var sgClient = new SendGrid.SendGridClient(apiKey, _options.SendGridApiUri);
 
 			response = await sgClient.SendEmailAsync(mail);
 
