@@ -22,7 +22,12 @@ namespace SecEdgarMiner.Logging
 	  }
 	  public static string Form4InsiderBuyingShortAlertEmail(Form4Info form4Info)
 	  {
-		 return $"{form4Info.IssuerTradingSymbol} \n{form4Info.HtmlUrl}";
+		 var chartHref = $"https://stockcharts.com/h-sc/ui?s={form4Info.IssuerTradingSymbol}";
+		 var tickerLink = $"<a href ='{chartHref}'>{form4Info.IssuerTradingSymbol}</a>";
+
+		 //return $"{form4Info.IssuerTradingSymbol} \n{form4Info.HtmlUrl}";
+
+		 return $"{tickerLink} \n{form4Info.HtmlUrl}";
 	  }
    }
 }

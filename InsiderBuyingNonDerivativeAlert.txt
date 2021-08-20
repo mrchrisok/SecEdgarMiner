@@ -1,0 +1,103 @@
+SOFI, https://www.sec.gov/Archives/edgar/data/1613438/000110465921107158/xslF345X03/tm2125386d1_4.xml
+
+SOFI, https://www.sec.gov/Archives/edgar/data/1613438/000110465921107158/xslF345X03/tm2125386d1_4.xml
+
+SOFI, https://www.sec.gov/Archives/edgar/data/1613438/000110465921107158/xslF345X03/tm2125386d1_4.xml
+
+SOFI, https://www.sec.gov/Archives/edgar/data/1613438/000110465921107158/xslF345X03/tm2125386d1_4.xml
+
+TURN, https://www.sec.gov/Archives/edgar/data/893739/000128913421000016/xslF345X03/wf-form4_162929184074466.xml
+
+GRF, https://www.sec.gov/Archives/edgar/data/850027/000179337321000008/xslF345X03/primary_doc.xml
+
+CTBI, https://www.sec.gov/Archives/edgar/data/350852/000035085221000075/xslF345X03/primary_doc.xml
+
+VIA, https://www.sec.gov/Archives/edgar/data/1582187/000160626821000087/xslF345X03/wf-form4_162929971414952.xml
+
+PTA, https://www.sec.gov/Archives/edgar/data/1767696/000089924321033411/xslF345X03/doc4.xml
+
+LVOX, https://www.sec.gov/Archives/edgar/data/1208623/000120919121052149/xslF345X03/doc4.xml
+
+PWOD, https://www.sec.gov/Archives/edgar/data/716605/000117494721000806/xslF345X03/ownership.xml
+
+UHT, https://www.sec.gov/Archives/edgar/data/798783/000112760221023965/xslF345X03/form4.xml
+
+CFAC, https://www.sec.gov/Archives/edgar/data/1024896/000121390021043590/xslF345X03/ownership.xml
+
+CFAC, https://www.sec.gov/Archives/edgar/data/1024896/000121390021043590/xslF345X03/ownership.xml
+UHT, https://www.sec.gov/Archives/edgar/data/798783/000112760221023965/xslF345X03/form4.xml
+PWOD, https://www.sec.gov/Archives/edgar/data/716605/000117494721000806/xslF345X03/ownership.xml
+LVOX, https://www.sec.gov/Archives/edgar/data/1208623/000120919121052149/xslF345X03/doc4.xml
+PTA, https://www.sec.gov/Archives/edgar/data/1767696/000089924321033411/xslF345X03/doc4.xml
+VIA, https://www.sec.gov/Archives/edgar/data/1582187/000160626821000087/xslF345X03/wf-form4_162929971414952.xml
+
+LFMD, https://www.sec.gov/Archives/edgar/data/948320/000136211821000029/xslF345X03/primary_doc.xml
+
+LFMD, https://www.sec.gov/Archives/edgar/data/948320/000136211821000030/xslF345X03/primary_doc.xml
+
+TRST, https://www.sec.gov/Archives/edgar/data/357301/000156761921016047/xslF345X03/doc1.xml
+
+PBBK, https://www.sec.gov/Archives/edgar/data/1460063/000156761921016051/xslF345X03/doc1.xml
+PBBK, https://www.sec.gov/Archives/edgar/data/1721219/000156761921016049/xslF345X03/doc1.xml
+
+OPCH, https://www.sec.gov/Archives/edgar/data/1014739/000110465921107326/xslF345X03/tm2124220-5_4seq1.xml
+
+DEI, https://www.sec.gov/Archives/edgar/data/1364250/000089534521000734/xslF345X03/form4.xml
+AATC, https://www.sec.gov/Archives/edgar/data/943034/000094303421000023/xslF345X03/primary_doc.xml
+
+NHF, https://www.sec.gov/Archives/edgar/data/1228922/000143774921020413/xslF345X03/rdgdoc.xml
+NFE, https://www.sec.gov/Archives/edgar/data/1272147/000120919121052218/xslF345X03/doc4.xml
+SSBK, https://www.sec.gov/Archives/edgar/data/1689731/000120919121052217/xslF345X03/doc4.xml
+
+FF, https://www.sec.gov/Archives/edgar/data/1337298/000143774921020414/xslF345X03/rdgdoc.xml
+AEYE, https://www.sec.gov/Archives/edgar/data/1362190/000117911021008264/xslF345X03/edgar.xml
+
+BLL, https://www.sec.gov/Archives/edgar/data/9389/000000938921000135/xslF345X03/edgar.xml
+BRSP, https://www.sec.gov/Archives/edgar/data/1598424/000171754721000043/xslF345X03/wf-form4_162931912715179.xml
+
+BRSP, https://www.sec.gov/Archives/edgar/data/1369423/000171754721000045/xslF345X03/wf-form4_162931938290189.xml
+BRSP, https://www.sec.gov/Archives/edgar/data/1717547/000171754721000044/xslF345X03/wf-form4_162931923498952.xml
+CNO, https://www.sec.gov/Archives/edgar/data/1224608/000175720121000085/xslF345X03/edgar.xml
+
+AAT, https://www.sec.gov/Archives/edgar/data/1221359/000150021721000107/xslF345X03/wf-form4_162931956875562.xml
+
+AEYE, https://www.sec.gov/Archives/edgar/data/1362190/000117911021008280/xslF345X03/edgar.xml
+
+CNR, https://www.sec.gov/Archives/edgar/data/883902/000122503321000058/xslF345X03/edgar.xml
+
+MYOV, https://www.sec.gov/Archives/edgar/data/1446601/000089924321033476/xslF345X03/doc4.xml
+
+FST, https://www.sec.gov/Archives/edgar/data/1511989/000090571821001122/xslF345X03/fastacq_fm4aug162021.xml
+
+RRD, https://www.sec.gov/Archives/edgar/data/29669/000090571821001124/xslF345X03/rrdonnelley_fm4aug162021.xml
+AGLE, https://www.sec.gov/Archives/edgar/data/1636282/000120919121052272/xslF345X03/doc4.xml
+
+APP, https://www.sec.gov/Archives/edgar/data/1348636/000089924321033509/xslF345X03/doc4.xml
+
+NEPH, https://www.sec.gov/Archives/edgar/data/1196298/000091419021000282/xslF345X03/edgar.xml
+
+NICK, https://www.sec.gov/Archives/edgar/data/1000045/000139834421016492/xslF345X03/fp0068126_4.xml
+
+DNUT, https://www.sec.gov/Archives/edgar/data/1857154/000120919121052359/xslF345X03/doc4.xml
+
+CTOS, https://www.sec.gov/Archives/edgar/data/1481338/000121390021043697/xslF345X03/ownership.xml
+DNUT, https://www.sec.gov/Archives/edgar/data/1750705/000120919121052369/xslF345X03/doc4.xml
+
+CTOS, https://www.sec.gov/Archives/edgar/data/1709682/000121390021043700/xslF345X03/ownership.xml
+[FOA], https://www.sec.gov/Archives/edgar/data/1356440/000089924321033543/xslF345X03/doc4.xml
+
+UTZ, https://www.sec.gov/Archives/edgar/data/1739566/000173956621000158/xslF345X03/wf-form4_162932845971155.xml
+ATEX, https://www.sec.gov/Archives/edgar/data/1295252/000120919121052402/xslF345X03/doc4.xml
+CTOS, https://www.sec.gov/Archives/edgar/data/1709682/000121390021043700/xslF345X03/ownership.xml
+[FOA], https://www.sec.gov/Archives/edgar/data/1356440/000089924321033543/xslF345X03/doc4.xml
+
+UTZ, https://www.sec.gov/Archives/edgar/data/1739566/000173956621000160/xslF345X03/wf-form4_162932860444250.xml
+
+KRTX, https://www.sec.gov/Archives/edgar/data/1237564/000159396821001992/xslF345X03/primary_01.xml
+ORGN, https://www.sec.gov/Archives/edgar/data/1802457/000120919121052416/xslF345X03/doc4.xml
+
+AIRT, https://www.sec.gov/Archives/edgar/data/353184/000156761921016076/xslF345X03/doc1.xml
+SOFI, https://www.sec.gov/Archives/edgar/data/1613438/000110465921107436/xslF345X03/tm2125454d1_4.xml
+
+ORGN, https://www.sec.gov/Archives/edgar/data/1645234/000089924321033571/xslF345X03/doc4.xml
+
