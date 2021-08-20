@@ -13,7 +13,7 @@
         "SqlConnectionString": "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=MarketMinerSQL;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"
     },
     "MailerOptions": {
-        "AlertFilePath": "C:\\Users\\chrokonkwo\\OneDrive - Deloitte (O365D)\\Repos\\SecEdgarMiner",
+        "AlertFilePath": "",
         "DerivativeAlertFileName": "InsiderBuyingDerivativeAlert.txt",
         "NonDerivativeAlertFileName": "InsiderBuyingNonDerivativeAlert.txt",
         "SendGridApiUri": "https://api.sendgrid.com",
