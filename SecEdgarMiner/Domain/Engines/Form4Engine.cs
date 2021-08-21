@@ -25,7 +25,7 @@ namespace SecEdgarMiner.Domain.Engines
 	  private readonly HttpClient _client;
 	  private readonly ILogger<Form4Engine> _logger;
 
-	  private static string[] _stockIndications = new string[] { "STOCK", "COMMON", "SHARES" };
+	  private static readonly string[] _stockIndications = new string[] { "STOCK", "COMMON", "SHARES" };
 
 	  public async Task<Form4Info> GetInsiderBuyingForm4InfoAsync(Form4Info form4Info)
 	  {
@@ -113,7 +113,7 @@ namespace SecEdgarMiner.Domain.Engines
 	  /// <returns>Returns a list of NonDerivativeTransaction objects</returns>
 	  private IEnumerable<NonDerivativeTransaction> GetNonDerivativeInsiderBuyingTransactions(Form4Info form4Info, StatementOfBeneficialOwnership form4Statement)
 	  {
-		 bool transactionPriceNearLastPrice(float? transactionPrice)
+		 static bool transactionPriceNearLastPrice(float? transactionPrice)
 		 {
 			return true;
 
@@ -157,7 +157,7 @@ namespace SecEdgarMiner.Domain.Engines
 	  /// <returns>Returns a list of DerivativeTransaction objects</returns>
 	  private IEnumerable<DerivativeTransaction> GetDerivativeInsiderBuyingTransactions(Form4Info form4Info, StatementOfBeneficialOwnership form4Statement)
 	  {
-		 bool transactionPriceNearLastPrice(float? transactionPrice)
+		 static bool transactionPriceNearLastPrice(float? transactionPrice)
 		 {
 			return true;
 		 }
@@ -187,29 +187,6 @@ namespace SecEdgarMiner.Domain.Engines
 	  private bool IsOpenMarketOrPrivatePurchase(SecurityTransaction transaction)
 	  {
 		 return transaction.TransactionCode.GetValueOrDefault(TransactionType.OpenMarketOrPrivateSale) == TransactionType.OpenMarketOrPrivatePurchase;
-	  }
-
-	  private Form4Info GetInsiderBuyingForm4Info(Form4Info form4Info, StatementOfBeneficialOwnership form4Statement, InsiderBuyingAlertType alertType)
-	  {
-		 form4Info.AddInsiderBuyingAlertType(alertType);
-
-		 var insiderBuyingform4Info = new Form4Info
-		 {
-			PeriodOfReport = form4Statement.PeriodOfReport,
-			OwnerName = form4Statement.OwnerName,
-			OwnerCik = form4Statement.OwnerCik,
-			OwnerIsOfficer = form4Statement.OwnerIsOfficer,
-			OwnerOfficerTitle = form4Statement.OwnerOfficerTitle,
-			IssuerName = form4Statement.IssuerName,
-			IssuerTradingSymbol = form4Statement.IssuerTradingSymbol,
-			IssuerCik = form4Statement.IssuerCik,
-			//
-			XmlUrl = form4Info.XmlUrl,
-			HtmlUrl = form4Info.HtmlUrl,
-			InsiderBuyingAlertTypes = form4Info.InsiderBuyingAlertTypes
-		 };
-
-		 return insiderBuyingform4Info;
 	  }
 
 	  private Task<double> GetStockLastTradingPriceAsync(string tradingSymbol)

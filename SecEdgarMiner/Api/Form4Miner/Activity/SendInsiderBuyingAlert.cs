@@ -33,81 +33,79 @@ namespace SecEdgarMiner.Api.Form4Miner.Activity
 	  {
 		 var insiderBuyingForm4InfoList = context.GetInput<IEnumerable<Form4Info>>();
 
-		 await SendDerivativeAlertAsync(insiderBuyingForm4InfoList);
-		 await SendNonDerivativeAlertAsync(insiderBuyingForm4InfoList);
+		 // important:
+		 // a Form4 can contain derivative and non-derivative transactions so
+		 // evaluation will be divided into 2 channels
+
+		 await SendAlertAsync(insiderBuyingForm4InfoList, InsiderBuyingAlertType.Derivative, _options.SendDerivativeInsiderBuyingAlertEmail);
+		 await SendAlertAsync(insiderBuyingForm4InfoList, InsiderBuyingAlertType.NonDerivative, _options.SendNonDerivativeInsiderBuyingAlertEmail);
 	  }
 
-	  private async Task SendDerivativeAlertAsync(IEnumerable<Form4Info> insiderBuyingForm4InfoList)
+	  private async Task SendAlertAsync(IEnumerable<Form4Info> insiderBuyingForm4InfoList, InsiderBuyingAlertType alertType, bool sendAlertEmail = false)
 	  {
-		 var derivativeAlertForm4InfoList = insiderBuyingForm4InfoList.Where(form4Info => form4Info.InsiderBuyingAlertTypes.Contains(InsiderBuyingAlertType.Derivative));
+		 var insiderBuyingList = insiderBuyingForm4InfoList.Where(form4Info => form4Info.InsiderBuyingAlertTypes.Contains(alertType));
 
-		 if (derivativeAlertForm4InfoList.Count() == 0)
+		 if (insiderBuyingList.Count() == 0)
 		 {
 			return;
 		 }
 
-		 var alertEmailSubject = new List<string>();
-		 var alertEmailBuilder = new StringBuilder();
-		 var alertFileBuilder = new StringBuilder();
+		 var messageParts = BuildAlertMessageParts(insiderBuyingList, alertType);
 
-		 foreach (var form4Info in derivativeAlertForm4InfoList)
+		 await SendMessageToFileAsync(messageParts.FileMessage.ToString(), alertType);
+
+		 if (sendAlertEmail)
 		 {
-			var shortAlertMessage = Information.Form4InsiderBuyingShortAlert(form4Info);
-			//_logger.LogInformation(shortAlertMessage);
-
-			var shortAlertEmailMessage = Information.Form4InsiderBuyingShortAlertEmail(form4Info);
-
-			if (!alertEmailSubject.Contains(form4Info.IssuerTradingSymbol))
-			{
-			   alertEmailSubject.Add(form4Info.IssuerTradingSymbol);
-			}
-
-			alertEmailBuilder.AppendLine($"{shortAlertEmailMessage}\n");
-
-			var shortAlertFileMessage = Information.Form4InsiderBuyingShortAlertFile(form4Info);
-			alertFileBuilder.AppendLine($"{shortAlertFileMessage}");
+			await SendEmailMessageAsync(string.Join(',', messageParts.EmailSubject), messageParts.EmailMessage.ToString());
 		 }
-
-		 await SendMessageToFileAsync(alertFileBuilder.ToString(), InsiderBuyingAlertType.Derivative);
-		 //await SendEmailMessageAsync(string.Join(',', alertEmailSubject), alertEmailBuilder.ToString());
 	  }
 
-	  private async Task SendNonDerivativeAlertAsync(IEnumerable<Form4Info> insiderBuyingForm4InfoList)
+	  private class AlertMessageParts
 	  {
-		 var nonDerivativeAlertForm4InfoList = insiderBuyingForm4InfoList.Where(form4Info => form4Info.InsiderBuyingAlertTypes.Contains(InsiderBuyingAlertType.NonDerivative));
+		 public List<string> EmailSubject { get; set; } = new List<string>();
+		 public StringBuilder EmailMessage { get; set; } = new StringBuilder();
+		 public StringBuilder FileMessage { get; set; } = new StringBuilder();
+	  }
 
-		 if (nonDerivativeAlertForm4InfoList.Count() == 0)
+	  private AlertMessageParts BuildAlertMessageParts(IEnumerable<Form4Info> form4InfoList, InsiderBuyingAlertType alertType)
+	  {
+		 var messageParts = new AlertMessageParts();
+
+		 foreach (var form4Info in form4InfoList)
 		 {
-			return;
-		 }
+			var shortAlertMessage = Information.Form4InsiderBuyingShortAlert(form4Info, alertType);
 
-		 var alertEmailSubject = new List<string>();
-		 var alertEmailBuilder = new StringBuilder();
-		 var alertFileBuilder = new StringBuilder();
-
-		 foreach (var form4Info in nonDerivativeAlertForm4InfoList)
-		 {
-			var shortAlertMessage = Information.Form4InsiderBuyingShortAlert(form4Info);
 			_logger.LogInformation(shortAlertMessage);
 
-			var shortAlertEmailMessage = Information.Form4InsiderBuyingShortAlertEmail(form4Info);
-
-			if (!alertEmailSubject.Contains(form4Info.IssuerTradingSymbol))
+			if (SendEmailAlert(form4Info))
 			{
-			   alertEmailSubject.Add(form4Info.IssuerTradingSymbol);
+			   if (!messageParts.EmailSubject.Contains(form4Info.IssuerTradingSymbol))
+			   {
+				  messageParts.EmailSubject.Add(form4Info.IssuerTradingSymbol);
+			   }
+
+			   var emailMessage = Information.Form4InsiderBuyingShortAlertEmail(form4Info);
+			   messageParts.EmailMessage.AppendLine($"{emailMessage}\n");
 			}
 
-			alertEmailBuilder.AppendLine($"{shortAlertEmailMessage}\n");
-
 			var shortAlertFileMessage = Information.Form4InsiderBuyingShortAlertFile(form4Info);
-			alertFileBuilder.AppendLine($"{shortAlertFileMessage}");
+			messageParts.FileMessage.AppendLine($"{shortAlertFileMessage}");
 		 }
 
-		 await SendMessageToFileAsync(alertFileBuilder.ToString(), InsiderBuyingAlertType.NonDerivative);
-		 await SendEmailMessageAsync(string.Join(',', alertEmailSubject), alertEmailBuilder.ToString());
+		 return messageParts;
 	  }
 
-	  public async Task SendMessageToFileAsync(string message, InsiderBuyingAlertType alertType)
+	  private bool SendEmailAlert(Form4Info form4Info)
+	  {
+		 if (form4Info.OwnerIsOfficer)
+		 {
+			return _options.SendOfficerInsiderBuyingAlertEmail;
+		 }
+
+		 return _options.SendNonOfficerInsiderBuyingAlertEmail;
+	  }
+
+	  private async Task SendMessageToFileAsync(string message, InsiderBuyingAlertType alertType)
 	  {
 		 try
 		 {

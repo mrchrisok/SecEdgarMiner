@@ -12,9 +12,11 @@ namespace SecEdgarMiner.Logging
 		 return $"Form4 insider buying found in Issuer: '{form4Info.IssuerTradingSymbol},{form4Info.IssuerCik}' by '{ownerType},{form4Info.OwnerCik}' with PeriodOfReport: {periodOfReport}";
 	  }
 
-	  public static string Form4InsiderBuyingShortAlert(Form4Info form4Info)
+	  public static string Form4InsiderBuyingShortAlert(Form4Info form4Info, InsiderBuyingAlertType alertType)
 	  {
-		 return $"ALERT: {form4Info.IssuerTradingSymbol}, {form4Info.HtmlUrl}";
+		 var shortAlertType = alertType == InsiderBuyingAlertType.Derivative ? "DRV" : "NRV";
+
+		 return $"ALERT [{shortAlertType}]: {form4Info.IssuerTradingSymbol}, {form4Info.HtmlUrl}";
 	  }
 	  public static string Form4InsiderBuyingShortAlertFile(Form4Info form4Info)
 	  {

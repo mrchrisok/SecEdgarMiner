@@ -12,16 +12,16 @@ namespace SecEdgarMiner.Api.Form4Miner
 {
    public class Form4MinerTimer
    {
-	  private readonly IForm4RssWorker _form4RssWorker;
-	  private readonly IForm4Engine _form4Engine;
-	  private readonly ILogger<Form4MinerTimer> _logger;
-
 	  public Form4MinerTimer(IForm4RssWorker form4RssWorker, IForm4Engine form4Engine, ILogger<Form4MinerTimer> logger)
 	  {
 		 _form4RssWorker = form4RssWorker;
 		 _form4Engine = form4Engine;
 		 _logger = logger;
 	  }
+
+	  private readonly IForm4RssWorker _form4RssWorker;
+	  private readonly IForm4Engine _form4Engine;
+	  private readonly ILogger<Form4MinerTimer> _logger;
 
 	  [FunctionName(nameof(Form4MinerTimer))]
 	  public async Task TimerStart([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer,

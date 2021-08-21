@@ -57,7 +57,7 @@ namespace SecEdgarMiner.Api.Form4Miner.Orchestration
 		 }
 		 catch (Exception ex)
 		 {
-			_logger.LogError($"GetInsiderBuying failed. Message: {ex.Message}");
+			_logger.LogError($"{nameof(GetInsiderBuying)} failed. Message: {ex.Message}");
 		 }
 	  }
    }

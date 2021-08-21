@@ -7,7 +7,10 @@
 	  public string NonDerivativeAlertFileName { get; set; }
 	  public string SendGridApiUri { get; set; }
 	  public string SendGridApiKey { get; set; }
-
+	  public bool SendDerivativeInsiderBuyingAlertEmail { get; set; }
+	  public bool SendNonDerivativeInsiderBuyingAlertEmail { get; set; }
+	  public bool SendOfficerInsiderBuyingAlertEmail { get; set; }
+	  public bool SendNonOfficerInsiderBuyingAlertEmail { get; set; }
 	  public string DerivativeAlertFileUri => GetAlertFileUri(DerivativeAlertFileName);
 	  public string NonDerivativeAlertFileUri => GetAlertFileUri(NonDerivativeAlertFileName);
 

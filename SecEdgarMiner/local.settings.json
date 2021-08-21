@@ -17,6 +17,10 @@
         "DerivativeAlertFileName": "InsiderBuyingDerivativeAlert.txt",
         "NonDerivativeAlertFileName": "InsiderBuyingNonDerivativeAlert.txt",
         "SendGridApiUri": "https://api.sendgrid.com",
-        "SendGridApiKey": ""
+        "SendGridApiKey": "",
+        "SendDerivativeInsiderBuyingAlertEmail": false,
+        "SendNonDerivativeInsiderBuyingAlertEmail": true,
+        "SendOfficerInsiderBuyingAlertEmail": true,
+        "SendNonOfficerInsiderBuyingAlertEmail": false
     }
 }
