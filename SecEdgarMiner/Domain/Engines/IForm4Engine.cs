@@ -7,8 +7,8 @@ namespace SecEdgarMiner.Domain.Engines
 {
    public interface IForm4Engine
    {
-	  Task<StatementOfBeneficialOwnership> GetForm4StatementAsync(Form4Info form4Info);
-	  Task<Form4Info> GetInsiderBuyingForm4InfoAsync(Form4Info form4Info);
-	  Task<IEnumerable<SecurityTransaction>> GetInsiderBuyingTransactionsAsync(Form4Info form4Info);
+	  Task<StatementOfBeneficialOwnership> GetForm4StatementAsync(Form4InfoModel form4Info);
+	  Task<Form4InfoModel> GetInsiderBuyingForm4InfoAsync(Form4InfoModel form4Info);
+	  Task<IEnumerable<SecurityTransaction>> GetInsiderBuyingTransactionsAsync(Form4InfoModel form4Info);
    }
 }

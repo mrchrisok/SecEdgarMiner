@@ -1,6 +1,6 @@
 ﻿namespace SecEdgarMiner.Domain.Models
 {
-   public class Form4RssItem
+   public class Form4RssItemModel
    {
 	  public string title { get; set; }
 	  public string link { get; set; }

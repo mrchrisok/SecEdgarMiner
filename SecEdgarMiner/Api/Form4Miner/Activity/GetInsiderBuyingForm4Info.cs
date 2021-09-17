@@ -19,9 +19,9 @@ namespace SecEdgarMiner.Api.Form4Miner.Activity
 	  private readonly ILogger<Form4MinerTimer> _logger;
 
 	  [FunctionName(nameof(GetInsiderBuyingForm4Info))]
-	  public async Task<Form4Info> Run([ActivityTrigger] IDurableActivityContext context)
+	  public async Task<Form4InfoModel> Run([ActivityTrigger] IDurableActivityContext context)
 	  {
-		 var form4Info = context.GetInput<Form4Info>();
+		 var form4Info = context.GetInput<Form4InfoModel>();
 		 var insiderBuyingForm4Info = await _form4Engine.GetInsiderBuyingForm4InfoAsync(form4Info);
 		 return insiderBuyingForm4Info;
 	  }

@@ -21,7 +21,7 @@ namespace SecEdgarMiner.Api.Form4Miner.Activity
 	  private readonly ILogger<GetLatestForm4Filings> _logger;
 
 	  [FunctionName(nameof(GetLatestForm4Filings))]
-	  public async Task<IEnumerable<Form4Info>> Run([ActivityTrigger] IDurableActivityContext context)
+	  public async Task<IEnumerable<Form4InfoModel>> Run([ActivityTrigger] IDurableActivityContext context)
 	  {
 		 var fetchCount = 100;
 
@@ -34,7 +34,7 @@ namespace SecEdgarMiner.Api.Form4Miner.Activity
 
 		 if (distinctFilingsOnly)
 		 {
-			var uniqueForm4InfoList = new List<Form4Info>();
+			var uniqueForm4InfoList = new List<Form4InfoModel>();
 
 			foreach (var form4Info in form4InfoList)
 			{

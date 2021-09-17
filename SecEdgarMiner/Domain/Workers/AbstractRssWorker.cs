@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using SecEdgarMiner.Utilities;
+using SecEdgarMiner.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;

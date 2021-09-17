@@ -1,6 +1,4 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Azure.KeyVault;
-using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -8,10 +6,10 @@ using Microsoft.Extensions.Configuration.AzureKeyVault;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SecEdgarMiner.Common;
 using SecEdgarMiner.Data;
 using SecEdgarMiner.Domain.Engines;
 using SecEdgarMiner.Domain.Workers;
-using System;
 
 [assembly: FunctionsStartup(typeof(SecEdgarMiner.Startup))]
 
@@ -33,7 +31,7 @@ namespace SecEdgarMiner
 		 var configBuilder = new ConfigurationBuilder()
 			 .SetBasePath(currentDirectory)
 			 .AddConfiguration(configuration) // Add the original function configuration
-			 .AddJsonFile("local.settings.json", optional: true, reloadOnChange: false)
+			 .AddJsonFile(source => ConfigHelper.GetLocalSettings())
 			 .AddEnvironmentVariables();
 
 		 GetKeyVaultConfigurations(configBuilder);
@@ -58,9 +56,10 @@ namespace SecEdgarMiner
 
 		 builder.Services.AddScoped<IForm4RssWorker, Form4RssWorker>();
 		 builder.Services.AddScoped<IForm4Engine, Form4Engine>();
+		 //builder.Services.AddScoped<ISendGridClient, SendGridClient>();
 
-		 string connectionString = Environment.GetEnvironmentVariable("ConnectionStrings:SqlConnectionString");
-		 builder.Services.AddDbContext<MarketMinerDbContext>(options => options.UseSqlServer(connectionString));
+		 string connectionString = config["ConnectionStrings:SqlConnectionString"];
+		 builder.Services.AddDbContext<MarketMinerContext>(options => options.UseSqlServer(connectionString));
 
 		 builder.Services.AddOptions<MailerOptions>()
 			.Configure<IConfiguration>((settings, configuration) =>
@@ -73,9 +72,10 @@ namespace SecEdgarMiner
 	  {
 		 var config = configBuilder.Build();
 		 var keyVaultEndpoint = $"https://{config["KeyVaultName"]}.vault.azure.net/";
+		 var keyVaultClient = KeyVaultHelper.GetKeyVaultClient(config["KeyVaultName"]);
 
-		 var azureServiceTokenProvider = new AzureServiceTokenProvider();
-		 var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
+		 //var azureServiceTokenProvider = new AzureServiceTokenProvider();
+		 //var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
 
 		 configBuilder.AddAzureKeyVault(keyVaultEndpoint, keyVaultClient, new DefaultKeyVaultSecretManager());
 

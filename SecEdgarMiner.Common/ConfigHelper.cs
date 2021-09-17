@@ -1,20 +1,27 @@
-﻿using System.IO;
+﻿using Microsoft.Extensions.Configuration.Json;
+using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace SecEdgarMiner.Utilities
+namespace SecEdgarMiner.Common
 {
-   public class HttpHelper
+   public class ConfigHelper
    {
-	  public static async Task<string> GetResponseMessageAsync(HttpResponseMessage response)
+	  public static JsonConfigurationProvider GetLocalSettings()
 	  {
-		 var stream = await GetResponseStreamAsync(response);
-		 var reader = new StreamReader(stream);
-		 var message = reader.ReadToEnd();
 
-		 return message;
+		 var jsonConfigurationSource = new JsonConfigurationSource
+		 {
+			Path = $"{typeof(ConfigHelper).Assembly.Location}\\local.settings.json",
+			Optional = true,
+			ReloadOnChange = false
+		 };
+
+		 var jsonConfigurationProvider = new JsonConfigurationProvider(jsonConfigurationSource);
+
+		 return jsonConfigurationProvider;
 	  }
 
 	  public static async Task<Stream> GetResponseStreamAsync(HttpResponseMessage response)

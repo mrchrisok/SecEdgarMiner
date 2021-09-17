@@ -1,7 +1,7 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
+using SecEdgarMiner.Common;
 using SecEdgarMiner.Domain.Models;
-using SecEdgarMiner.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +18,9 @@ namespace SecEdgarMiner.Domain.Workers
 	  {
 	  }
 
-	  public async Task<IEnumerable<Form4Info>> GetForm4InfoListAsync(SyndicationFeed feed)
+	  public async Task<IEnumerable<Form4InfoModel>> GetForm4InfoListAsync(SyndicationFeed feed)
 	  {
-		 var form4InfoList = new List<Form4Info>();
+		 var form4InfoList = new List<Form4InfoModel>();
 
 		 foreach (var rssItem in feed.Items)
 		 {
@@ -31,7 +31,7 @@ namespace SecEdgarMiner.Domain.Workers
 		 return form4InfoList.Distinct();
 	  }
 
-	  public async Task<Form4Info> GetForm4InfoAsync(SyndicationItem rssItem)
+	  public async Task<Form4InfoModel> GetForm4InfoAsync(SyndicationItem rssItem)
 	  {
 		 var form4EntryUri = await GetForm4EntryUri(rssItem);
 		 var form4XmlDataUri = await GetForm4InfoAsync(form4EntryUri);
@@ -51,7 +51,7 @@ namespace SecEdgarMiner.Domain.Workers
 		 return Task.FromResult(rssItem.Links[0].Uri);
 	  }
 
-	  private async Task<Form4Info> GetForm4InfoAsync(Uri form4EntryUri)
+	  private async Task<Form4InfoModel> GetForm4InfoAsync(Uri form4EntryUri)
 	  {
 		 var response = await _client.GetAsync(form4EntryUri);
 		 var pageString = await HttpHelper.GetResponseMessageAsync(response);
@@ -59,7 +59,7 @@ namespace SecEdgarMiner.Domain.Workers
 		 var htmlDoc = new HtmlDocument();
 		 htmlDoc.LoadHtml(pageString);
 
-		 var form4Info = new Form4Info();
+		 var form4Info = new Form4InfoModel();
 		 var form4DocumentUriLinks = htmlDoc.DocumentNode.Descendants("a")
 			.Where(anchor => anchor.GetAttributeValue("href", "").EndsWith(".xml"));
 

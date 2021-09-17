@@ -7,7 +7,7 @@ namespace SecEdgarMiner.Domain.Workers
 {
    public interface IForm4RssWorker : IRssWorker
    {
-	  Task<IEnumerable<Form4Info>> GetForm4InfoListAsync(SyndicationFeed feed);
-	  Task<Form4Info> GetForm4InfoAsync(SyndicationItem rssItem);
+	  Task<IEnumerable<Form4InfoModel>> GetForm4InfoListAsync(SyndicationFeed feed);
+	  Task<Form4InfoModel> GetForm4InfoAsync(SyndicationItem rssItem);
    }
 }

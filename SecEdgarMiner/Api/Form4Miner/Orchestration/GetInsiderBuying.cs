@@ -29,16 +29,16 @@ namespace SecEdgarMiner.Api.Form4Miner.Orchestration
 		 {
 			var distinctFilingsOnly = true;
 
-			var form4InfoList = await context.CallActivityAsync<IEnumerable<Form4Info>>(nameof(GetLatestForm4Filings), distinctFilingsOnly);
+			var form4InfoList = await context.CallActivityAsync<IEnumerable<Form4InfoModel>>(nameof(GetLatestForm4Filings), distinctFilingsOnly);
 
 			if (form4InfoList?.Count() == 0) return;
 			//
 
-			var parallelTasks = new List<Task<Form4Info>>();
+			var parallelTasks = new List<Task<Form4InfoModel>>();
 
 			foreach (var form4Info in form4InfoList)
 			{
-			   var task = context.CallActivityAsync<Form4Info>(nameof(GetInsiderBuyingForm4Info), form4Info);
+			   var task = context.CallActivityAsync<Form4InfoModel>(nameof(GetInsiderBuyingForm4Info), form4Info);
 			   parallelTasks.Add(task);
 			}
 

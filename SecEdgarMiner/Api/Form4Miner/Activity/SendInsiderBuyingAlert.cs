@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using SecEdgarMiner.Domain.Engines;
 using SecEdgarMiner.Domain.Models;
 using SecEdgarMiner.Logging;
+using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
@@ -27,11 +28,12 @@ namespace SecEdgarMiner.Api.Form4Miner.Activity
 	  private readonly IForm4Engine _form4Engine;
 	  private readonly ILogger<Form4MinerTimer> _logger;
 	  private readonly MailerOptions _options;
+	  //private readonly ISendGridClient _mailClient;
 
 	  [FunctionName(nameof(SendInsiderBuyingAlert))]
 	  public async Task Run([ActivityTrigger] IDurableActivityContext context)
 	  {
-		 var insiderBuyingForm4InfoList = context.GetInput<IEnumerable<Form4Info>>();
+		 var insiderBuyingForm4InfoList = context.GetInput<IEnumerable<Form4InfoModel>>();
 
 		 // important:
 		 // a Form4 can contain derivative and non-derivative transactions so
@@ -41,7 +43,7 @@ namespace SecEdgarMiner.Api.Form4Miner.Activity
 		 await SendAlertAsync(insiderBuyingForm4InfoList, InsiderBuyingAlertType.NonDerivative, _options.SendNonDerivativeInsiderBuyingAlertEmail);
 	  }
 
-	  private async Task SendAlertAsync(IEnumerable<Form4Info> insiderBuyingForm4InfoList, InsiderBuyingAlertType alertType, bool sendAlertEmail = false)
+	  private async Task SendAlertAsync(IEnumerable<Form4InfoModel> insiderBuyingForm4InfoList, InsiderBuyingAlertType alertType, bool sendAlertEmail = false)
 	  {
 		 var insiderBuyingList = insiderBuyingForm4InfoList.Where(form4Info => form4Info.InsiderBuyingAlertTypes.Contains(alertType));
 
@@ -54,7 +56,7 @@ namespace SecEdgarMiner.Api.Form4Miner.Activity
 
 		 await SendMessageToFileAsync(messageParts.FileMessage.ToString(), alertType);
 
-		 if (sendAlertEmail)
+		 if (sendAlertEmail && messageParts.EmailSubject.Count > 0)
 		 {
 			await SendEmailMessageAsync(string.Join(',', messageParts.EmailSubject), messageParts.EmailMessage.ToString());
 		 }
@@ -67,7 +69,7 @@ namespace SecEdgarMiner.Api.Form4Miner.Activity
 		 public StringBuilder FileMessage { get; set; } = new StringBuilder();
 	  }
 
-	  private AlertMessageParts BuildAlertMessageParts(IEnumerable<Form4Info> form4InfoList, InsiderBuyingAlertType alertType)
+	  private AlertMessageParts BuildAlertMessageParts(IEnumerable<Form4InfoModel> form4InfoList, InsiderBuyingAlertType alertType)
 	  {
 		 var messageParts = new AlertMessageParts();
 
@@ -95,7 +97,7 @@ namespace SecEdgarMiner.Api.Form4Miner.Activity
 		 return messageParts;
 	  }
 
-	  private bool SendEmailAlert(Form4Info form4Info)
+	  private bool SendEmailAlert(Form4InfoModel form4Info)
 	  {
 		 if (form4Info.OwnerIsOfficer)
 		 {
@@ -132,11 +134,11 @@ namespace SecEdgarMiner.Api.Form4Miner.Activity
 		 {
 			var mail = new SendGridMessage
 			{
-			   From = new EmailAddress("noreply@secedgarminer.com"),
+			   From = new EmailAddress("secedgar@mrktminr.com"),
 			   Subject = $"Form4 Insider Buying Alert: {subject}"
 			};
-			mail.AddTo("mrchrisok@hotmail.com");
-			mail.AddContent("text/plain", message);
+			mail.AddTo(new EmailAddress("mrchrisok@hotmail.com"));
+			mail.AddContent(MimeType.Text, message);
 
 			string apiKey = _options.SendGridApiKey;
 
@@ -144,9 +146,14 @@ namespace SecEdgarMiner.Api.Form4Miner.Activity
 
 			response = await sgClient.SendEmailAsync(mail);
 
+			// need to DI this in Startup with the factory pattern
+			// info here: https://github.com/sendgrid/sendgrid-csharp
+			//response = await _mailClient.SendEmailAsync(mail);
+
 			if (!response.IsSuccessStatusCode)
 			{
-			   throw new OperationErrorException(response.ToString());
+			   var responseBody = await response.Body.ReadAsStringAsync();
+			   throw new OperationErrorException(responseBody);
 			}
 		 }
 		 catch (Exception ex)

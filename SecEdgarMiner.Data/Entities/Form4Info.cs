@@ -2,7 +2,7 @@
 
 namespace SecEdgarMiner.Data.Entities
 {
-   public class Form4Document
+   public class Form4Info : AbstractEntity
    {
 	  public DateTime? PeriodOfReport { get; set; }
 	  public string OwnerName { get; set; }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
+using SecEdgarMiner.Common;
 using SecEdgarMiner.Data;
 using SecEdgarMiner.Domain.Models;
 using SecEdgarMiner.Logging;
-using SecEdgarMiner.Utilities;
 using SecuritiesExchangeCommission.Edgar;
 using System;
 using System.Collections.Generic;
@@ -14,20 +14,20 @@ namespace SecEdgarMiner.Domain.Engines
 {
    public class Form4Engine : IForm4Engine
    {
-	  public Form4Engine(IHttpClientFactory httpClientFactory, MarketMinerDbContext dbContext, ILogger<Form4Engine> logger)
+	  public Form4Engine(IHttpClientFactory httpClientFactory, MarketMinerContext dbContext, ILogger<Form4Engine> logger)
 	  {
 		 _client = httpClientFactory.CreateClient("SecEdgarMinerClient");
 		 _dbContext = dbContext;
 		 _logger = logger;
 	  }
 
-	  private readonly MarketMinerDbContext _dbContext;
+	  private readonly MarketMinerContext _dbContext;
 	  private readonly HttpClient _client;
 	  private readonly ILogger<Form4Engine> _logger;
 
 	  private static readonly string[] _stockIndications = new string[] { "STOCK", "COMMON", "SHARES" };
 
-	  public async Task<Form4Info> GetInsiderBuyingForm4InfoAsync(Form4Info form4Info)
+	  public async Task<Form4InfoModel> GetInsiderBuyingForm4InfoAsync(Form4InfoModel form4Info)
 	  {
 		 var form4Statement = await GetForm4StatementAsync(form4Info);
 
@@ -44,7 +44,7 @@ namespace SecEdgarMiner.Domain.Engines
 			return null;
 		 }
 
-		 var insiderBuyingform4Info = new Form4Info
+		 var insiderBuyingform4Info = new Form4InfoModel
 		 {
 			PeriodOfReport = form4Statement.PeriodOfReport,
 			OwnerName = form4Statement.OwnerName,
@@ -70,13 +70,12 @@ namespace SecEdgarMiner.Domain.Engines
 
 		 _logger.LogInformation(Information.Form4InsiderBuyingFoundInIssuer(insiderBuyingform4Info));
 
-		 await SaveStatementOfBeneficialOwnershipAsync(form4Statement);
 		 await SaveForm4InfoAsync(insiderBuyingform4Info);
 
 		 return insiderBuyingform4Info;
 	  }
 
-	  public async Task<StatementOfBeneficialOwnership> GetForm4StatementAsync(Form4Info form4Info)
+	  public async Task<StatementOfBeneficialOwnership> GetForm4StatementAsync(Form4InfoModel form4Info)
 	  {
 		 string form4XmlString;
 		 try
@@ -111,7 +110,7 @@ namespace SecEdgarMiner.Domain.Engines
 	  /// <param name="form4Info"></param>
 	  /// <param name="form4Statement"></param>
 	  /// <returns>Returns a list of NonDerivativeTransaction objects</returns>
-	  private IEnumerable<NonDerivativeTransaction> GetNonDerivativeInsiderBuyingTransactions(Form4Info form4Info, StatementOfBeneficialOwnership form4Statement)
+	  private IEnumerable<NonDerivativeTransaction> GetNonDerivativeInsiderBuyingTransactions(Form4InfoModel form4Info, StatementOfBeneficialOwnership form4Statement)
 	  {
 		 static bool transactionPriceNearLastPrice(float? transactionPrice)
 		 {
@@ -141,7 +140,7 @@ namespace SecEdgarMiner.Domain.Engines
 				  //&& transaction.DirectOrIndirectOwnership == OwnershipNature.Direct
 				  );
 		 }
-		 catch (Exception ex)
+		 catch (Exception)
 		 {
 			_logger.LogError($"LINQ error occured for statement: {form4Info.XmlUrl}");
 		 }
@@ -155,7 +154,7 @@ namespace SecEdgarMiner.Domain.Engines
 	  /// <param name="form4Info"></param>
 	  /// <param name="form4Statement"></param>
 	  /// <returns>Returns a list of DerivativeTransaction objects</returns>
-	  private IEnumerable<DerivativeTransaction> GetDerivativeInsiderBuyingTransactions(Form4Info form4Info, StatementOfBeneficialOwnership form4Statement)
+	  private IEnumerable<DerivativeTransaction> GetDerivativeInsiderBuyingTransactions(Form4InfoModel form4Info, StatementOfBeneficialOwnership form4Statement)
 	  {
 		 static bool transactionPriceNearLastPrice(float? transactionPrice)
 		 {
@@ -176,7 +175,7 @@ namespace SecEdgarMiner.Domain.Engines
 				  //&& transaction.DirectOrIndirectOwnership == OwnershipNature.Direct
 				  );
 		 }
-		 catch (Exception ex)
+		 catch (Exception)
 		 {
 			_logger.LogError($"LINQ error occured for statement: {form4Info.XmlUrl}");
 		 }
@@ -194,26 +193,21 @@ namespace SecEdgarMiner.Domain.Engines
 		 return Task.FromResult(5.00);
 	  }
 
-	  public Task<IEnumerable<SecurityTransaction>> GetInsiderBuyingTransactionsAsync(Form4Info form4Info)
+	  public Task<IEnumerable<SecurityTransaction>> GetInsiderBuyingTransactionsAsync(Form4InfoModel form4Info)
 	  {
 		 throw new NotImplementedException();
 	  }
 
-	  private async Task SaveStatementOfBeneficialOwnershipAsync(StatementOfBeneficialOwnership form4)
+	  private async Task SaveForm4InfoAsync(Form4InfoModel form4Info)
 	  {
-		 // todo
-		 // write code to do this
-
-		 //await _dbContext.StatementsOfBeneficialOwnership.AddAsync(form4);
-		 //await _dbContext.SaveChangesAsync();
-	  }
-	  private async Task SaveForm4InfoAsync(Form4Info form4Info)
-	  {
-		 // todo
-		 // write code to do this
-
-		 //await _dbContext.Form4Info.AddAsync(form4);
-		 //await _dbContext.SaveChangesAsync();
+		 try
+		 {
+			await _dbContext.CreateAsync(form4Info);
+		 }
+		 catch (Exception ex)
+		 {
+			_logger.LogError($"Db Save error occured for statement: {form4Info.XmlUrl}. Error Msg: {ex.InnerException.Message}");
+		 }
 	  }
    }
 }

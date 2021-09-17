@@ -19,7 +19,6 @@
     <PackageReference Include="ValueInjecter" Version="3.2.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SecEdgarMiner.Common\SecEdgarMiner.Common.csproj" />
     <ProjectReference Include="..\SecEdgarMiner.Data\SecEdgarMiner.Data.csproj" />
   </ItemGroup>
   <ItemGroup>
