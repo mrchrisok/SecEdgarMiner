@@ -8,21 +8,6 @@ namespace SecEdgarMiner.Common
 {
     public class ConfigHelper
     {
-        //public static JsonConfigurationProvider GetLocalSettings()
-        //{
-
-        //var jsonConfigurationSource = new JsonConfigurationSource
-        //{
-        //Path = $"{typeof(ConfigHelper).Assembly.Location}\\local.settings.json",
-        //Optional = true,
-        //ReloadOnChange = false
-        //};
-
-        //var jsonConfigurationProvider = new JsonConfigurationProvider(jsonConfigurationSource);
-
-        //return jsonConfigurationProvider;
-        //}
-
         public static async Task<Stream> GetResponseStreamAsync(HttpResponseMessage response)
         {
             var stream = await response.Content.ReadAsStreamAsync();
