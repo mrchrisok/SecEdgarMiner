@@ -4,18 +4,20 @@ using SecEdgarMiner.Common;
 
 namespace SecEdgarMiner.Data
 {
-   public class MarketMinerContextFactory : IDesignTimeDbContextFactory<MarketMinerContext>
-   {
-	  public MarketMinerContext CreateDbContext(string[] args)
-	  {
-		 ConfigHelper.GetLocalSettings().TryGet("KeyVaultName", out string connectionString);
+    public class MarketMinerContextFactory : IDesignTimeDbContextFactory<MarketMinerContext>
+    {
+        public MarketMinerContext CreateDbContext(string[] args)
+        {
+            //ConfigHelper.GetLocalSettings().TryGet("KeyVaultName", out string connectionString);
 
-		 //var connectionString = KeyVaultHelper.GetSecretValueAsync(nameof(SecEdgarMiner), "ConnectionStrings:SqlConnectionString").Result;
+            var keyVaultName = $"{nameof(SecEdgarMiner)}keyvault".ToLower();
 
-		 var optionsBuilder = new DbContextOptionsBuilder<MarketMinerContext>();
-		 optionsBuilder.UseSqlServer(connectionString);
+            var connectionString = KeyVaultHelper.GetSecretValueAsync(keyVaultName, "ConnectionStrings:SqlConnectionString").Result;
 
-		 return new MarketMinerContext(optionsBuilder.Options);
-	  }
-   }
+            var optionsBuilder = new DbContextOptionsBuilder<MarketMinerContext>();
+            optionsBuilder.UseSqlServer(connectionString);
+
+            return new MarketMinerContext(optionsBuilder.Options);
+        }
+    }
 }
