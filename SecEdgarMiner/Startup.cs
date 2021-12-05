@@ -70,7 +70,7 @@ namespace SecEdgarMiner
         private IConfigurationBuilder GetKeyVaultConfigurations(IConfigurationBuilder configBuilder)
         {
             var config = configBuilder.Build();
-            var keyVaultClient = KeyVaultHelper.GetKeyVaultClient(config["VaultUri"]);
+            var keyVaultClient = KeyVaultHelper.GetKeyVaultClient();
 
             configBuilder.AddAzureKeyVault(config["VaultUri"], keyVaultClient, new DefaultKeyVaultSecretManager());
 
