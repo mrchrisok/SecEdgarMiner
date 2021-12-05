@@ -1,14 +1,10 @@
 {
     "IsEncrypted": false,
-    "Values": {
-        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-        "KeyVaultName": "secedgarminerkeyvault"
-        //"MailerOptions__SendGridApiUri": "https://api.sendgrid.com",
-        //"MailerOptions__SendGridApiKey": "@Microsoft.KeyVault(VaultName=secedgarminerkeyvault;SecretName=SendGridApiKey)",
-        //"MailerOptions__DerivativeAlertFileUri": "C:\\Users\\Osita\\Desktop\\InsiderBuyingDerivativeAlert.txt",
-        //"MailerOptions__NonDerivativeAlertFileUri": "C:\\Users\\Osita\\Desktop\\InsiderBuyingNonDerivativeAlert.txt"
-    },
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "VaultUri": "https://secedgarminerkeyvault.vault.azure.net/"
+  },
     "ConnectionStrings": {
         "SqlConnectionString": "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=MarketMinerSQL;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"
     },

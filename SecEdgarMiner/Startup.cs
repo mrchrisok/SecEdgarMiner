@@ -43,8 +43,8 @@ namespace SecEdgarMiner
 
             builder.Services.AddLogging(options =>
             {
-             // this will enable all loggers to write to the console
-             options.AddFilter(nameof(SecEdgarMiner), LogLevel.Information);
+                // this will enable all loggers to write to the console
+                options.AddFilter(nameof(SecEdgarMiner), LogLevel.Information);
             });
 
             builder.Services.AddHttpClient("SecEdgarMinerClient", client =>
@@ -56,7 +56,6 @@ namespace SecEdgarMiner
 
             builder.Services.AddScoped<IForm4RssWorker, Form4RssWorker>();
             builder.Services.AddScoped<IForm4Engine, Form4Engine>();
-            //builder.Services.AddScoped<ISendGridClient, SendGridClient>();
 
             string connectionString = config["ConnectionStrings:SqlConnectionString"];
             builder.Services.AddDbContext<MarketMinerContext>(options => options.UseSqlServer(connectionString));
@@ -71,13 +70,9 @@ namespace SecEdgarMiner
         private IConfigurationBuilder GetKeyVaultConfigurations(IConfigurationBuilder configBuilder)
         {
             var config = configBuilder.Build();
-            var keyVaultEndpoint = $"https://{config["KeyVaultName"]}.vault.azure.net/";
-            var keyVaultClient = KeyVaultHelper.GetKeyVaultClient(config["KeyVaultName"]);
+            var keyVaultClient = KeyVaultHelper.GetKeyVaultClient(config["VaultUri"]);
 
-            //var azureServiceTokenProvider = new AzureServiceTokenProvider();
-            //var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
-
-            configBuilder.AddAzureKeyVault(keyVaultEndpoint, keyVaultClient, new DefaultKeyVaultSecretManager());
+            configBuilder.AddAzureKeyVault(config["VaultUri"], keyVaultClient, new DefaultKeyVaultSecretManager());
 
             return configBuilder;
         }

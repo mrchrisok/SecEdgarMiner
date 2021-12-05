@@ -10,9 +10,9 @@ namespace SecEdgarMiner.Data
         {
             //ConfigHelper.GetLocalSettings().TryGet("KeyVaultName", out string connectionString);
 
-            var keyVaultName = $"{nameof(SecEdgarMiner)}keyvault".ToLower();
+            var keyVaultUri = $"{nameof(SecEdgarMiner)}keyvault".ToLower();
 
-            var connectionString = KeyVaultHelper.GetSecretValueAsync(keyVaultName, "ConnectionStrings:SqlConnectionString").Result;
+            var connectionString = KeyVaultHelper.GetSecretValueAsync(keyVaultUri, "ConnectionStrings:SqlConnectionString").Result;
 
             var optionsBuilder = new DbContextOptionsBuilder<MarketMinerContext>();
             optionsBuilder.UseSqlServer(connectionString);

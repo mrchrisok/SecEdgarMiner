@@ -6,20 +6,18 @@ namespace SecEdgarMiner.Common
 {
     public class KeyVaultHelper
     {
-        public static KeyVaultClient GetKeyVaultClient(string keyVaultName)
+        public static KeyVaultClient GetKeyVaultClient()
         {
-            var keyVaultEndpoint = $"https://{keyVaultName.ToLowerInvariant()}.vault.azure.net/";
-
             var azureServiceTokenProvider = new AzureServiceTokenProvider();
             var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
 
             return keyVaultClient;
         }
 
-        public static async Task<string> GetSecretValueAsync(string keyVaultName, string secretName)
+        public static async Task<string> GetSecretValueAsync(string keyVaultUri, string secretName)
         {
-            var keyVaultClient = GetKeyVaultClient(keyVaultName);
-            var secretValue = await keyVaultClient.GetSecretAsync(secretName);
+            var keyVaultClient = GetKeyVaultClient();
+            var secretValue = await keyVaultClient.GetSecretAsync(keyVaultUri, secretName);
             return secretValue.Value;
         }
     }
