@@ -10,6 +10,7 @@ using SecEdgarMiner.Common;
 using SecEdgarMiner.Data;
 using SecEdgarMiner.Domain.Engines;
 using SecEdgarMiner.Domain.Workers;
+using SecEdgarMiner.Options;
 
 [assembly: FunctionsStartup(typeof(SecEdgarMiner.Startup))]
 

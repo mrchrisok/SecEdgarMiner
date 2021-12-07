@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using SecEdgarMiner.Domain.Engines;
 using SecEdgarMiner.Domain.Models;
 using SecEdgarMiner.Logging;
+using SecEdgarMiner.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;

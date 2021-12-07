@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SecEdgarMiner.Common;
 using SecEdgarMiner.Data;
 using SecEdgarMiner.Domain.Models;
 using SecEdgarMiner.Logging;
+using SecEdgarMiner.Options;
 using SecuritiesExchangeCommission.Edgar;
 using System;
 using System.Collections.Generic;
@@ -14,15 +16,17 @@ namespace SecEdgarMiner.Domain.Engines
 {
     public class Form4Engine : IForm4Engine
     {
-        public Form4Engine(IHttpClientFactory httpClientFactory, MarketMinerContext dbContext, ILogger<Form4Engine> logger)
+        public Form4Engine(IHttpClientFactory httpClientFactory, MarketMinerContext dbContext, IOptions<Form4EngineOptions> options, ILogger<Form4Engine> logger)
         {
             _client = httpClientFactory.CreateClient("SecEdgarMinerClient");
             _dbContext = dbContext;
+            _options = options;
             _logger = logger;
         }
 
         private readonly MarketMinerContext _dbContext;
         private readonly HttpClient _client;
+        private readonly IOptions<Form4EngineOptions> _options;
         private readonly ILogger<Form4Engine> _logger;
 
         private static readonly string[] _stockIndications = new string[] { "STOCK", "COMMON", "SHARES" };
@@ -66,6 +70,8 @@ namespace SecEdgarMiner.Domain.Engines
             if (nonDerivativeInsiderBuyingTransactions.Count() != 0)
             {
                 insiderBuyingform4Info.AddInsiderBuyingAlertType(InsiderBuyingAlertType.NonDerivative);
+
+                insiderBuyingform4Info.PurchaseTransactionsTotal = form4Info.PurchaseTransactionsTotal;
             }
 
             _logger.LogInformation(Information.Form4InsiderBuyingFoundInIssuer(insiderBuyingform4Info));
@@ -119,6 +125,7 @@ namespace SecEdgarMiner.Domain.Engines
         /// <returns>Returns a list of NonDerivativeTransaction objects</returns>
         private IEnumerable<NonDerivativeTransaction> GetNonDerivativeInsiderBuyingTransactions(Form4InfoModel form4Info, StatementOfBeneficialOwnership form4Statement)
         {
+
             IEnumerable<NonDerivativeTransaction> insiderBuyingTransactions = null;
             try
             {
@@ -138,7 +145,11 @@ namespace SecEdgarMiner.Domain.Engines
                 _logger.LogError($"LINQ error occured for statement: {form4Info.XmlUrl}");
             }
 
-            return insiderBuyingTransactions ?? new List<NonDerivativeTransaction>();
+            insiderBuyingTransactions ??= new List<NonDerivativeTransaction>();
+
+            form4Info.PurchaseTransactionsTotal = GetTransactionsTotal(insiderBuyingTransactions);
+
+            return insiderBuyingTransactions;
         }
 
         /// <summary>
@@ -173,6 +184,23 @@ namespace SecEdgarMiner.Domain.Engines
             }
 
             return insiderBuyingTransactions ?? new List<DerivativeTransaction>();
+        }
+
+        private decimal? GetTransactionsTotal(IEnumerable<SecurityTransaction> transactions)
+        {
+            if (transactions == null)
+            {
+                return default;
+            }
+
+            float? transactionsTotal = 0;
+
+            foreach (var transaction in transactions)
+            {
+                transactionsTotal += transaction.TransactionQuantity * transaction.TransactionPricePerSecurity;
+            }
+
+            return (decimal)transactionsTotal;
         }
 
         private static bool TransactionPriceNearLastPrice(float? transactionPrice)
