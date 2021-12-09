@@ -2,7 +2,7 @@
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SecEdgarMiner.Domain.Engines;
+using SecEdgarMiner.Contracts;
 using SecEdgarMiner.Domain.Models;
 using SecEdgarMiner.Logging;
 using SecEdgarMiner.Options;

@@ -2,8 +2,9 @@
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using SecEdgarMiner.Api.Form4Miner.Activity;
+using SecEdgarMiner.Api.Form4Miner.Entity;
+using SecEdgarMiner.Contracts;
 using SecEdgarMiner.Domain.Models;
-using SecEdgarMiner.Domain.Workers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,32 +28,40 @@ namespace SecEdgarMiner.Api.Form4Miner.Orchestration
         {
             try
             {
-                var distinctFilingsOnly = true;
+                var form4RssFeedArgsId = new EntityId(nameof(RssFeedState), "SecEdgarMinerForm4RssFeed");
 
-                var form4InfoList = await context.CallActivityAsync<IEnumerable<Form4InfoModel>>(nameof(GetLatestForm4Filings), distinctFilingsOnly);
-
-                if (form4InfoList?.Count() == 0) return;
-                //
-
-                var parallelTasks = new List<Task<Form4InfoModel>>();
-
-                foreach (var form4Info in form4InfoList)
+                using (await context.LockAsync(form4RssFeedArgsId))
                 {
-                    var task = context.CallActivityAsync<Form4InfoModel>(nameof(GetInsiderBuyingForm4Info), form4Info);
-                    parallelTasks.Add(task);
-                }
+                    var form4RssFeedStateProxy = context.CreateEntityProxy<IRssFeedState>(form4RssFeedArgsId);
+                    var form4RssFeedState = await form4RssFeedStateProxy.GetAsync();
 
-                await Task.WhenAll(parallelTasks);
+                    var form4Filings = await context.CallActivityAsync<Form4FilingsModel>(nameof(GetLatestForm4Filings), form4RssFeedState);
 
-                // aggregate & process tasks with resulst, if not null
+                    await form4RssFeedStateProxy.UpdateAsync(form4Filings.FeedState);
 
-                var insiderBuyingForm4InfoList = parallelTasks.Where(task => task.Result != null).Select(task => task.Result);
+                    if (form4Filings.Filings?.Count() == 0) return;
+                    //
 
-                _logger.LogInformation($"Form4 Insider Buys Count: {insiderBuyingForm4InfoList.Count()}");
+                    var parallelTasks = new List<Task<Form4InfoModel>>();
 
-                if (insiderBuyingForm4InfoList.Count() > 0)
-                {
-                    await context.CallActivityAsync(nameof(SendInsiderBuyingAlert), insiderBuyingForm4InfoList);
+                    foreach (var form4Info in form4Filings.Filings)
+                    {
+                        var task = context.CallActivityAsync<Form4InfoModel>(nameof(GetInsiderBuyingForm4Info), form4Info);
+                        parallelTasks.Add(task);
+                    }
+
+                    await Task.WhenAll(parallelTasks);
+
+                    // aggregate & process tasks with resulst, if not null
+
+                    var insiderBuyingForm4InfoList = parallelTasks.Where(task => task.Result != null).Select(task => task.Result);
+
+                    _logger.LogInformation($"Form4 Insider Buys Count: {insiderBuyingForm4InfoList.Count()}");
+
+                    if (insiderBuyingForm4InfoList.Count() > 0)
+                    {
+                        await context.CallActivityAsync(nameof(SendInsiderBuyingAlert), insiderBuyingForm4InfoList);
+                    }
                 }
             }
             catch (Exception ex)
