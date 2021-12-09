@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SecEdgarMiner.Common;
+using SecEdgarMiner.Contracts;
 using SecEdgarMiner.Data;
 using SecEdgarMiner.Domain.Models;
 using SecEdgarMiner.Logging;

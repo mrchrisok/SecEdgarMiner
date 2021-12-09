@@ -8,7 +8,8 @@ namespace SecEdgarMiner.Data
     {
         public MarketMinerContext CreateDbContext(string[] args)
         {
-            //ConfigHelper.GetLocalSettings().TryGet("KeyVaultName", out string connectionString);
+            // this method is only used during local dev
+            // it is not used by the app during runtime
 
             var keyVaultUri = "https://secedgarminerkeyvault.vault.azure.net/";
 

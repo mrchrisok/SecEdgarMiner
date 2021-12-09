@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SecEdgarMiner.Common;
+using SecEdgarMiner.Contracts;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,13 +22,11 @@ namespace SecEdgarMiner.Domain.Workers
 
         protected readonly HttpClient _client;
         protected readonly ILogger _logger;
+        protected readonly IRssFeedArgs _args;
 
-        private static DateTimeOffset? _feedLastUpdatedTime = DateTimeOffset.UtcNow.AddDays(-1);
-        private static string _feedLastETag;
-
-        public async Task<SyndicationFeed> GetRssFeedAsync(string rssUrl, bool latestItemsOnly = true)
+        public virtual async Task<SyndicationFeed> GetRssFeedAsync(string rssUrl, IRssFeedArgs args)
         {
-            var response = await GetRssServerResponseAsync(rssUrl, latestItemsOnly);
+            var response = await GetRssServerResponseAsync(rssUrl, args);
 
             if (response == null) return null;
             //
@@ -47,22 +46,22 @@ namespace SecEdgarMiner.Domain.Workers
 
                 _logger.LogInformation($"Feed entries received Count(Total): {feed.Items.Count()}");
 
-                if (latestItemsOnly)
+                if (args.LatestItemsOnly)
                 {
-                    feed.Items = feed.Items.Where(item => item.LastUpdatedTime >= _feedLastUpdatedTime).ToList();
+                    feed.Items = feed.Items.Where(item => item.LastUpdatedTime >= args.State.LastUpdatedTime).ToList();
 
                     _logger.LogInformation($"Feed entries received Count(NewOrUpdated): {feed.Items.Count()}");
                 }
 
-                _feedLastUpdatedTime = feed.LastUpdatedTime;
+                args.State.LastUpdatedTime = feed.LastUpdatedTime;
 
                 return feed;
             }
         }
 
-        public async Task<IEnumerable<SyndicationItem>> GetRssFeedItemsAsync(string rssUrl, bool latestItemsOnly = true)
+        public virtual async Task<IEnumerable<SyndicationItem>> GetRssFeedItemsAsync(string rssUrl, IRssFeedArgs args)
         {
-            var feed = await GetRssFeedAsync(rssUrl, latestItemsOnly);
+            var feed = await GetRssFeedAsync(rssUrl, args);
 
             return feed.Items.ToList();
         }
@@ -77,18 +76,18 @@ namespace SecEdgarMiner.Domain.Workers
             throw new NotImplementedException();
         }
 
-        protected virtual async Task<HttpResponseMessage> GetRssServerResponseAsync(string rssUrl, bool latestItemsOnly)
+        private async Task<HttpResponseMessage> GetRssServerResponseAsync(string rssUrl, IRssFeedArgs args)
         {
             _client.DefaultRequestHeaders.Remove("If-Modified-Since");
-            if (latestItemsOnly && _feedLastUpdatedTime.HasValue)
+            if (args.LatestItemsOnly)
             {
-                _client.DefaultRequestHeaders.IfModifiedSince = _feedLastUpdatedTime;
+                _client.DefaultRequestHeaders.IfModifiedSince = args.State.LastUpdatedTime;
             }
 
             _client.DefaultRequestHeaders.IfNoneMatch.Clear();
-            if (latestItemsOnly && !string.IsNullOrWhiteSpace(_feedLastETag))
+            if (args.LatestItemsOnly && !string.IsNullOrWhiteSpace(args.State.LastETag))
             {
-                _client.DefaultRequestHeaders.IfNoneMatch.TryParseAdd(_feedLastETag);
+                _client.DefaultRequestHeaders.IfNoneMatch.TryParseAdd(args.State.LastETag);
             }
 
             var response = await _client.GetAsync(rssUrl);
@@ -101,7 +100,7 @@ namespace SecEdgarMiner.Domain.Workers
 
             if (response.Headers.TryGetValues("ETag", out IEnumerable<string> eTagHeaders))
             {
-                _feedLastETag = eTagHeaders.FirstOrDefault();
+                args.State.LastETag = eTagHeaders.FirstOrDefault();
             }
 
             return response;

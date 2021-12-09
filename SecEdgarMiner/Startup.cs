@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SecEdgarMiner.Common;
+using SecEdgarMiner.Contracts;
 using SecEdgarMiner.Data;
 using SecEdgarMiner.Domain.Engines;
 using SecEdgarMiner.Domain.Workers;
