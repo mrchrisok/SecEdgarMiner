@@ -94,7 +94,7 @@ namespace SecEdgarMiner.Domain.Workers
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogInformation($"Rss request failed. Response status is: {response.StatusCode}");
+                _logger.LogError($"Rss request failed. Response status is: {response.StatusCode}");
                 return null;
             }
 

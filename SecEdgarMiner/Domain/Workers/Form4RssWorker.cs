@@ -23,7 +23,7 @@ namespace SecEdgarMiner.Domain.Workers
         {
             var form4InfoList = new List<Form4InfoModel>();
 
-            foreach (var rssItem in feed.Items)
+            foreach (var rssItem in feed?.Items)
             {
                 var form4Info = await GetForm4InfoAsync(rssItem);
                 form4InfoList.Add(form4Info);

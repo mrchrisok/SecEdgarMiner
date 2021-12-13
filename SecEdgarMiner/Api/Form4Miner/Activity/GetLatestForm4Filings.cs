@@ -33,6 +33,8 @@ namespace SecEdgarMiner.Api.Form4Miner.Activity
             var feed = await _form4RssWorker.GetRssFeedAsync(form4RssUri, form4RssFeedArgs);
             var form4InfoList = await _form4RssWorker.GetForm4InfoListAsync(feed);
 
+            _logger.LogInformation($"Form4 filings Count(Total): {form4InfoList.Count()}");
+
             var form4Filings = new Form4FilingsModel()
             {
                 FeedState = form4RssFeedArgs.State,
@@ -55,8 +57,6 @@ namespace SecEdgarMiner.Api.Form4Miner.Activity
 
                 form4Filings.Filings = uniqueForm4InfoList;
             }
-
-            _logger.LogInformation($"Form4 filings Count(): {form4InfoList.Count()}");
 
             return form4Filings;
         }
