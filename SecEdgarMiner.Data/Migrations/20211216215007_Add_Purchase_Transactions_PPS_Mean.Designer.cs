@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SecEdgarMiner.Data;
 
 namespace SecEdgarMiner.Data.Migrations
 {
     [DbContext(typeof(MarketMinerContext))]
-    partial class MarketMinerContextModelSnapshot : ModelSnapshot
+    [Migration("20211216215007_Add_Purchase_Transactions_PPS_Mean")]
+    partial class Add_Purchase_Transactions_PPS_Mean
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

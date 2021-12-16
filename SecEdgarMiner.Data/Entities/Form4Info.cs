@@ -12,6 +12,7 @@ namespace SecEdgarMiner.Data.Entities
         public string IssuerName { get; set; }
         public string IssuerTradingSymbol { get; set; }
         public string IssuerCik { get; set; }
+        public decimal? PurchaseTransactionsPricePerSecurityMean { get; set; }
         public decimal? PurchaseTransactionsTotal { get; set; }
         public string HtmlUrl { get; set; }
         public string XmlUrl { get; set; }

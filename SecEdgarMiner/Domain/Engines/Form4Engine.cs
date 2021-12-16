@@ -148,6 +148,7 @@ namespace SecEdgarMiner.Domain.Engines
 
             insiderBuyingTransactions ??= new List<NonDerivativeTransaction>();
 
+            form4Info.PurchaseTransactionsPricePerSecurityMean = GetTransactionsPricePerSecurityMean(insiderBuyingTransactions);
             form4Info.PurchaseTransactionsTotal = GetTransactionsTotal(insiderBuyingTransactions);
 
             return insiderBuyingTransactions;
@@ -185,6 +186,23 @@ namespace SecEdgarMiner.Domain.Engines
             }
 
             return insiderBuyingTransactions ?? new List<DerivativeTransaction>();
+        }
+
+        private decimal? GetTransactionsPricePerSecurityMean(IEnumerable<SecurityTransaction> transactions)
+        {
+            if (transactions == null)
+            {
+                return default;
+            }
+            if (transactions.Count() == 0)
+            {
+                return default;
+            }
+
+            float? transactionsPricePerSecurityTotal = transactions.Sum(t => t.TransactionPricePerSecurity);
+            float? transactionsPricePerSecurityMean = transactionsPricePerSecurityTotal / transactions.Count();
+
+            return (decimal)transactionsPricePerSecurityMean;
         }
 
         private decimal? GetTransactionsTotal(IEnumerable<SecurityTransaction> transactions)
