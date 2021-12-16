@@ -72,6 +72,7 @@ namespace SecEdgarMiner.Domain.Engines
             {
                 insiderBuyingform4Info.AddInsiderBuyingAlertType(InsiderBuyingAlertType.NonDerivative);
 
+                insiderBuyingform4Info.PurchaseTransactionsPricePerSecurityMean = form4Info.PurchaseTransactionsPricePerSecurityMean;
                 insiderBuyingform4Info.PurchaseTransactionsTotal = form4Info.PurchaseTransactionsTotal;
             }
 
