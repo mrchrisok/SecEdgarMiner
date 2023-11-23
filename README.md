@@ -1,7 +1,5 @@
 # SecEdgarMiner
 
-** IN DEVELOPMENT **
-
 Azure Durable Function App that reads and analyzes SEC filings.
 
 Technologies
