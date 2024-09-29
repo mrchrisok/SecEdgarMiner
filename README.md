@@ -16,6 +16,5 @@ Features
     - This bit is actually simple, but the how-to is poorly documented on the web.
 - Strongly-typed configuration using IOptions
 - Project deployed via: Azure Resource Group project + ARM template + MSDeploy + Zip pkg
-    - This bit is a wicket and doesn't work yet. But I've seen it done so stay tuned.
 
 Copyright (c) 2021 Osita Christopher Okonkwo
